@@ -28,7 +28,7 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar', exclude: '*-sources.jar')
 }
 
-version = "1.0.0"
+version = "1.0.1"
 ext.jdtInputFile = "eclipseJdt/org.eclipse.jdt.core.prefs"
 ext.pmdSettingsFile = "pmd/.pmd"
 
