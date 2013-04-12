@@ -19,8 +19,7 @@ apply plugin: 'findbugs'
 
 repositories {
     mavenCentral()
-    flatDir { dirs 'lib'
-    }  }
+    flatDir { dirs 'lib' }  }
 
 dependencies {
     compile gradleApi()
@@ -104,13 +103,13 @@ project.task('distribution', type: Zip) { Zip task ->
     //task.from project.configurations.runtime
 }
 project.task("continous", type: GradleBuild) {GradleBuild task ->
+    task.dependsOn("test", "check")
     group = 'Build'
-    description = 'Runs test,check.'
-    task.tasks << 'test'
-    task.tasks << 'check'
+    description = 'Runs test and check.'
 }
+
 project.task("release", type: GradleBuild) { GradleBuild task ->
-    task.dependsOn "refreshBuildFileGenerator"
+    task.dependsOn("continous")
     task.buildFile = 'build.gradle'
     group = 'Build'
     description = 'Runs tests,jar and sourceJar targets.'
