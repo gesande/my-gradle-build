@@ -4,6 +4,7 @@ publish to public
 release 1.0.1
 provide examples how to utilize my-gradle-build
 took scripts from chalkbox project
+provide a wiki page for instructions
 
 IN PROGRESS 
 
