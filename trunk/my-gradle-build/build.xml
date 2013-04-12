@@ -1,0 +1,35 @@
+<project name="gradle-mygradlebuild" default="continous">
+	<description description="Build entrypoints">
+	</description>
+	<!-- set global properties for this build -->
+	<property environment="env" />
+	<condition property="gradle-exec" value="gradle.base" else="gradle">
+		<os family="windows" />
+	</condition>
+	<property name="gradle.executable" location="${env.GRADLE_HOME}/bin/${gradle-exec}" />
+	<target name="continous">
+		<exec executable="${gradle.executable}" dir=".">
+			<arg value="continous" />
+		</exec>
+	</target>
+	<target name="release">
+		<exec executable="${gradle.executable}" dir=".">
+			<arg value="release" />
+		</exec>
+	</target>
+	<target name="eclipse">
+		<exec executable="${gradle.executable}" dir=".">
+			<arg value="eclipse" />
+		</exec>
+	</target>
+	<target name="test">
+		<exec executable="${gradle.executable}" dir=".">
+			<arg value="test" />
+		</exec>
+	</target>
+	<target name="tasks">
+		<exec executable="${gradle.executable}" dir=".">
+			<arg value="tasks" />
+		</exec>
+	</target>
+</project>
