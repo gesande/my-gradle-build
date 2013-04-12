@@ -1,0 +1,12 @@
+DONE
+
+publish to public
+release 1.0.1
+
+IN PROGRESS 
+
+WAITING
+provide examples how to utilize my-gradle-build
+ - take scripts etc from chalkbox project
+
+
