@@ -12,10 +12,14 @@ final class ReadFileToStringBuilder {
         final BufferedReader bufferedReader = new BufferedReader(
                 new FileReader(new File(parent, filename)));
         final StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            System.out.println(line);
-            sb.append(line).append("\n");
+        try {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+                sb.append(line).append("\n");
+            }
+        } finally {
+            bufferedReader.close();
         }
         return sb;
     }

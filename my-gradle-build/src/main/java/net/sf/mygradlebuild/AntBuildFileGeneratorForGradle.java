@@ -59,7 +59,9 @@ public class AntBuildFileGeneratorForGradle {
             appendTarget(sb, defaultTarget);
         }
         for (final String target : targets) {
-            appendTarget(sb, target);
+            if (defaultTarget != null && !defaultTarget.equals(target)) {
+                appendTarget(sb, target);
+            }
         }
         return sb.append("</project>").append(newLine());
     }

@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import net.sf.mygradlebuild.AntBuildFileGeneratorForGradle;
-
 import org.junit.Test;
 
 public class AntBuildFileGeneratorForGradleTest {
@@ -33,8 +31,6 @@ public class AntBuildFileGeneratorForGradleTest {
                         + "\t\t<exec executable=\"${gradle.executable}\" dir=\".\">\n"
                         + "\t\t\t<arg value=\"defaultTarget\" />\n\t\t</exec>\n"
                         + "\t</target>\n"
-                        + "\t<target name=\"defaultTarget\">\n"
-                        + "\t\t<exec executable=\"${gradle.executable}\" dir=\".\">\n\t\t\t<arg value=\"defaultTarget\" />\n\t\t</exec>\n\t</target>\n"
                         + "\t<target name=\"target1\">\n\t\t<exec executable=\"${gradle.executable}\" dir=\".\">\n"
                         + "\t\t\t<arg value=\"target1\" />\n\t\t</exec>\n\t</target>\n</project>\n",
                 readBuildFile(parent, "build.xml"));
