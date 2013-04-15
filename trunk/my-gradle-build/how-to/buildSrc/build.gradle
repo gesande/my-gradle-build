@@ -1,3 +1,8 @@
+/*
+ After copying this under buildSrc project, run gradle eclipse for creating the initial eclipse settings for the project. 
+ Otherwise you'll end up with some problems that build stuff won't compile.
+ */
+
 import static org.gradle.logging.StyledTextOutput.Style
 
 import org.gradle.logging.StyledTextOutputFactory
@@ -45,4 +50,3 @@ eclipse {
         }
     }
 }
-
