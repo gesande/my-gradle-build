@@ -8,10 +8,6 @@ import net.sf.mygradlebuild.plugins.NewJavaProjectToSvnPlugin
 import net.sf.mygradlebuild.plugins.ReportingPlugin
 import net.sf.mygradlebuild.plugins.SvnPlugin
 
-//import your stuff
-import YourApplicationBuildPlugin
-import ExportAntBuildFilePlugin
-
 
 ext {
     //make sure these files exist
@@ -30,7 +26,7 @@ ext {
     distributionBasename = 'yourapplication-distribution'
 }
 
-version = "$artifactVersion"
+version = project.properties.artifactVersion //you can put this on distributable projects, if you want to use artifactVersion as a base version
 
 apply plugin: MavenCentral
 apply plugin: NewJavaProjectToSvnPlugin
