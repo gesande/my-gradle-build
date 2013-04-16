@@ -1,6 +1,6 @@
+import org.gradle.api.Task
 import org.gradle.api.plugins.quality.FindBugs
 import org.gradle.api.plugins.quality.Pmd
-import org.gradle.api.tasks.GradleBuild
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.logging.StyledTextOutputFactory
@@ -16,6 +16,8 @@ apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
+apply plugin: 'jdepend'
+//apply from : "${project.projectDir}/distributable/plugins/emma.gradle"
 
 repositories {
     mavenCentral()
@@ -87,6 +89,44 @@ project.eclipseJdt {
     doLast { println "Forked eclipseJdt.inputFile from ${jdtInputFile}." }
 }
 
+project.apply {
+    [
+        project.jdependMain,
+        project.jdependTest
+    ]*.reports {
+        xml.enabled true
+        text.enabled false
+    }
+}
+
+project.jdependMain.doLast {
+    File file = new File(project.jdepend.reportsDir, "main.xml");
+    assert file.exists() && file.isFile(), "File '$file' must exist"
+    def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
+    def outputFactory = services.get(StyledTextOutputFactory).create("jdependMain.doLast")
+    if (numberOfCycles > 0) {
+        outputFactory.withStyle(Style.Error).println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
+        assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
+    }
+    else {
+        outputFactory.withStyle(Style.Info).println("No cycles detected for project '${project.name}' . Good work!")
+    }
+}
+
+project.jdependTest.doLast {
+    File file = new File(project.jdepend.reportsDir, "test.xml");
+    assert file.exists() && file.isFile(), "File '$file' must exist"
+    def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
+    def outputFactory = services.get(StyledTextOutputFactory).create("jdependTest.doLast")
+    if (numberOfCycles > 0) {
+        outputFactory.withStyle(Style.Error).println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
+        //assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
+    }
+    else {
+        outputFactory.withStyle(Style.Info).println("No cycles detected for project '${project.name}' . Good work!")
+    }
+}
+
 project.task("sourcesJar", type: Jar, dependsOn:"classes") {
     group = 'Distribution'
     description = "Makes the project specific sourceJar."
@@ -105,27 +145,38 @@ project.task('distribution', type: Zip) { Zip task ->
         from "distributable/plugins"
         include '*.gradle'
     }
+    task.from task.project.fileTree("${project.projectDir}") {
+        from "src/main/resources"
+        include 'COPYING'
+    }
+
     //task.from project.configurations.runtime
 }
-project.task("continous", type: GradleBuild) {GradleBuild task ->
-    task.dependsOn("test", "check")
+project.task("continous") { Task task ->
+    task.dependsOn("check")
     group = 'Build'
     description = 'Runs test and check.'
 }
 
-project.task("release", type: GradleBuild) { GradleBuild task ->
-    task.dependsOn("continous")
-    task.buildFile = 'build.gradle'
-    group = 'Build'
-    description = 'Runs tests,jar and sourceJar targets.'
-    task.tasks << 'distribution'
+project.task("cleanRelease") { Task task ->
+    task.dependsOn("clean", "continous", "distribution")
+    group = 'Distribution'
+    description = 'Runs continous build and makes distribution.'
 }
 
-project.task('runtimeDistribution', type: Zip) { Zip task ->
+project.task('distributionWithRuntimeDependencies', type: Zip) { Zip task ->
     group = 'Distribution'
     description = "Makes the project runtime distribution archive."
     task.dependsOn("jar")
-    task.from project.jar
+    task.dependsOn("sourcesJar")
+    task.from task.project.fileTree(project.projectDir) {
+        from "distributable/plugins"
+        include '*.gradle'
+    }
+    task.from task.project.fileTree("${project.projectDir}") {
+        from "src/main/resources"
+        include 'COPYING'
+    }
     task.from project.configurations.runtime
     task.exclude 'junit-4.10.jar'
 }
