@@ -45,12 +45,10 @@ public class GradleBuildFileGenerator {
 
     private static void makingSureParentDirectoryExists(final File file,
             final String name) {
-        if (!file.exists()) {
-            if (!file.mkdirs()) {
-                throw new RuntimeException(
-                        "Not able to create the parent directories for '"
-                                + name + "'! Need to exit.");
-            }
+        if (!file.exists() && !file.mkdirs()) {
+            throw new RuntimeException(
+                    "Not able to create the parent directory for '" + name
+                            + "'! Need to exit.");
         }
     }
 }
