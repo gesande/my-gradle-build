@@ -58,7 +58,7 @@ project.tasks.withType(FindBugs) { ignoreFailures = true } //true for time being
 }
 
 
-project.eclipse.classpath.defaultOutputDir = file('target/classes')
+project.eclipse.classpath.defaultOutputDir = project.file('target/classes')
 
 project.ext.junitLib='junit-4.10'
 

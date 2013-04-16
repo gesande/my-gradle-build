@@ -12,9 +12,9 @@
 			<arg value="continous" />
 		</exec>
 	</target>
-	<target name="release">
+	<target name="cleanRelease">
 		<exec executable="${gradle.executable}" dir=".">
-			<arg value="release" />
+			<arg value="cleanRelease" />
 		</exec>
 	</target>
 	<target name="eclipse">
