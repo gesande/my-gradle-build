@@ -19,7 +19,8 @@ apply plugin: 'findbugs'
 
 repositories {
     mavenCentral()
-    flatDir { dirs 'lib' }  }
+    flatDir { dirs 'lib' }
+}
 
 dependencies {
     compile gradleApi()
@@ -27,7 +28,7 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar', exclude: '*-sources.jar')
 }
 
-version = "1.0.2"
+version = "1.0.3"
 ext.jdtInputFile = "eclipseJdt/org.eclipse.jdt.core.prefs"
 ext.pmdSettingsFile = "pmd/.pmd"
 
@@ -100,6 +101,10 @@ project.task('distribution', type: Zip) { Zip task ->
     task.dependsOn("sourcesJar")
     task.from project.jar
     task.from project.sourcesJar
+    task.from task.project.fileTree(project.projectDir) {
+        from "distributable/plugins"
+        include '*.gradle'
+    }
     //task.from project.configurations.runtime
 }
 project.task("continous", type: GradleBuild) {GradleBuild task ->
