@@ -11,5 +11,5 @@ fixed issue with analyzeOnlyPackages in aggregateFindbugsReport tasks
 IN PROGRESS 
 
 WAITING
-
-
+- to make a Project<Plugin> of emma, take a look at: http://git.springsource.org/spring-security/spring-security/blobs/5fe589e36074d51409c9ad5f87daf6564877534c/gradle/emma.gradle
+- making tools obsolete -> use ant-findbugs etc?
