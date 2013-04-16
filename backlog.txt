@@ -5,6 +5,8 @@ release 1.0.1
 provide examples how to utilize my-gradle-build
 took scripts from chalkbox project
 provide a wiki page for instructions
+release 1.0.2
+fixed issue with analyzeOnlyPackages in aggregateFindbugsReport tasks
 
 IN PROGRESS 
 
