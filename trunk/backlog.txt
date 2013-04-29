@@ -7,6 +7,8 @@ took scripts from chalkbox project
 provide a wiki page for instructions
 release 1.0.2
 fixed issue with analyzeOnlyPackages in aggregateFindbugsReport tasks
+release 1.0.3
+fixed issue with AntBuildFileGeneratorForGradle -> build.xml wasn't working with windows
 
 IN PROGRESS 
 

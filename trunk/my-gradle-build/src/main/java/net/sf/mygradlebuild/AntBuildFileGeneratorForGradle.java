@@ -46,7 +46,7 @@ public class AntBuildFileGeneratorForGradle {
         sb.append(tab()).append("<property environment=\"env\" />")
                 .append(newLine());
         sb.append(tab())
-                .append("<condition property=\"gradle-exec\" value=\"gradle.base\" else=\"gradle\">")
+                .append("<condition property=\"gradle-exec\" value=\"gradle.bat\" else=\"gradle\">")
                 .append(newLine());
         sb.append(tab()).append(tab()).append("<os family=\"windows\" />")
                 .append(newLine());
