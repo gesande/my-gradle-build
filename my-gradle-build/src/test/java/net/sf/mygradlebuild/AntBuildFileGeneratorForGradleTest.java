@@ -23,7 +23,7 @@ public class AntBuildFileGeneratorForGradleTest {
                         + "\t<description description=\"Build entrypoints\">\n"
                         + "\t</description>\n\t<!-- set global properties for this build -->\n"
                         + "\t<property environment=\"env\" />\n"
-                        + "\t<condition property=\"gradle-exec\" value=\"gradle.base\" else=\"gradle\">\n"
+                        + "\t<condition property=\"gradle-exec\" value=\"gradle.bat\" else=\"gradle\">\n"
                         + "\t\t<os family=\"windows\" />\n"
                         + "\t</condition>\n"
                         + "\t<property name=\"gradle.executable\" location=\"${env.GRADLE_HOME}/bin/${gradle-exec}\" />\n"
