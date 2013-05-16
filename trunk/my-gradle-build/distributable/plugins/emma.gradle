@@ -106,7 +106,7 @@ test {
             def String[] splitted =coverage.split(" ");
             def Double actualCoverage = Double.parseDouble(splitted[0].replace("%", ""))
             if(actualCoverage < 95.0){
-                outputFactory.withStyle(Style.Error).println("Line coverage was lower than expected (95.0), it was ${actualCoverage} so you need to work on this.")
+                outputFactory.withStyle(Style.Error).println("Line coverage was lower than expected (95.0), it was ${actualCoverage} so you need to work on $project.name.")
             } else {
                 outputFactory.withStyle(Style.Info).println("Line coverage was ${coverage}, good job!")
             }
