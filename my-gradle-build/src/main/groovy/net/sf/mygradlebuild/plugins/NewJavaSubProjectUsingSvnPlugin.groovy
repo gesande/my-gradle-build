@@ -14,25 +14,8 @@ public class NewJavaSubProjectUsingSvnPlugin implements Plugin<Project> {
 
     @Override
     public void apply(final Project project) {
-
-        project.task("createLibDirs") { Task task ->
-            group 'Development'
-            description 'Creates lib and lib-sources -directories under the given project.'
-            task.doLast {
-                def libDir = new File(task.project.projectDir, 'lib')
-                libDir.mkdirs()
-                def libSourcesDir = new File(task.project.projectDir, 'lib-sources')
-                libSourcesDir.mkdirs()
-            }
-        }
-        project.task("createJavaDirs") { Task task ->
-            group 'Development'
-            description 'Create directory structures for a Java project.'
-            task.doLast {
-                project.sourceSets*.java.srcDirs*.each { it.mkdirs() }
-                project.sourceSets*.resources.srcDirs*.each { it.mkdirs() }
-            }
-        }
+        project.subprojects { apply plugin: NewJavaSubProject  }
+        
         project.task("addProjectToSvn") { Task task ->
             group 'Svn'
             description 'Add project to SVN.'
@@ -94,24 +77,6 @@ public class NewJavaSubProjectUsingSvnPlugin implements Plugin<Project> {
                 }
                 services.get(StyledTextOutputFactory).create("java-development.applySvnIgnore").withStyle(Style.Info).println("Svn ignore applied as defined in ${task.project.projectDir}/svn-ignore in project ${task.project.name}.")
             }
-        }
-
-        project.task("buildGradleForJavaProject",type: ExportGradleBuildFileForNewJavaProject) { ExportGradleBuildFileForNewJavaProject task ->
-            task.parent = task.project.projectDir
-            task.projectName = task.project.name
-            task.applyFroms = ["\"\$emmaPlugin\""]
-            task.applyPlugins = [
-                "net.sf.mygradlebuild.plugins.JavaProjectDistribution"
-            ]
-        }
-
-        project.task("buildGradleForJavaLibProject",type: ExportGradleBuildFileForJavaLibraryProject) { ExportGradleBuildFileForJavaLibraryProject task ->
-            task.parent = task.project.projectDir
-            task.projectName = task.project.name
-            task.applyFroms = [
-                "net.sf.mygradlebuild.plugins.JavaLibraryProject"
-            ]
-            task.library = task.project.name
         }
     }
 }
