@@ -90,7 +90,7 @@ public class ReportingPlugin implements Plugin<Project>{
 					args = arguments
 				}
 				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateCoverageReport")
-				outputFactory.withStyle(Style.Info).println("Coverage report can be found from file://${targetDir}/coverage.html)")
+				outputFactory.withStyle(Style.Info).println("Coverage report can be found from file://${targetDir}/coverage.html")
 			}
 		}
 		project.task("aggregateJDependReport") {
@@ -123,7 +123,7 @@ public class ReportingPlugin implements Plugin<Project>{
 						standardOutput = os
 					}
 					def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateJDependReport")
-					outputFactory.withStyle(Style.Info).println("JDepend report can be found from file://${targetDir}/index.html)")
+					outputFactory.withStyle(Style.Info).println("JDepend report can be found from file://${targetDir}/index.html")
 				}
 			}
 		}
@@ -188,7 +188,7 @@ public class ReportingPlugin implements Plugin<Project>{
 					}
 				}
 				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateFindBugsReport")
-				outputFactory.withStyle(Style.Info).println("Findbugs report can be found from file://${targetDir}/index.html)")
+				outputFactory.withStyle(Style.Info).println("Findbugs report can be found from file://${targetDir}/index.html")
 			}
 		}
 		project.gradle.projectsEvaluated { addTasksAfterProjectsEvaluated(project) }
