@@ -10,8 +10,8 @@ public class GradleProjectBuilderForJavaProject implements GradleProjectBuilder 
     private List<String> applyPlugins;
 
     private GradleProjectBuilderForJavaProject() {
-        this.applyFroms = new ArrayList<String>();
-        this.applyPlugins = new ArrayList<String>();
+        this.applyFroms = new ArrayList<>();
+        this.applyPlugins = new ArrayList<>();
     }
 
     public static GradleProjectBuilderForJavaProject forProject(
