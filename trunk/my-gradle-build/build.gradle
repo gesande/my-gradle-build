@@ -3,8 +3,6 @@ import org.gradle.api.plugins.quality.FindBugs
 import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.logging.StyledTextOutputFactory
-import org.gradle.logging.StyledTextOutput.Style
 import org.gradle.plugins.ide.eclipse.model.AbstractLibrary
 import org.gradle.plugins.ide.eclipse.model.Classpath
 import org.gradle.plugins.ide.eclipse.model.ClasspathEntry
@@ -20,41 +18,43 @@ apply plugin: 'jdepend'
 //apply from : "${project.projectDir}/distributable/plugins/emma.gradle"
 
 repositories {
-    mavenCentral()
-    flatDir { dirs 'lib' }
+	mavenCentral()
+	flatDir { dirs 'lib' }
 }
 
 dependencies {
-    compile gradleApi()
-    groovy localGroovy()
-    compile fileTree(dir: 'lib', include: '*.jar', exclude: '*-sources.jar')
+	compile gradleApi()
+	compile 'org.codehaus.groovy:groovy-all:2.4.7'
+	compile fileTree(dir: 'lib', include: '*.jar', exclude: '*-sources.jar')
 }
 
-version = "1.0.4"
+version = "2.0.0"
 ext.jdtInputFile = "eclipseJdt/org.eclipse.jdt.core.prefs"
-ext.pmdSettingsFile = "pmd/.pmd"
+//ext.pmdSettingsFile = "pmd/.pmd"
+//project.pmd.ruleSetFiles = project.files(".pmd")
+project.pmd.ignoreFailures = 'true'
 
+/*
 project.tasks.withType(Pmd) {
-    doFirst {
-        project.copy {
-            from project.file(pmdSettingsFile)
-            into project.projectDir
-        }
-        println "Pmd template file copied for project '${project.name}'"
-    }
+	doFirst {
+		project.copy {
+			from project.file(pmdSettingsFile)
+			into project.projectDir
+		}
+		println "Pmd template file copied for project '${project.name}'"
+	}
 }
+*/
 
-project.pmd.ruleSetFiles = project.files(".pmd")
-project.pmd.ignoreFailures = 'false'
 
 project.tasks.withType(FindBugs) { ignoreFailures = true } //true for time being
 
 [
-    project.findbugsMain,
-    project.findbugsTest
+	project.findbugsMain,
+	project.findbugsTest
 ]*.reports {
-    xml.enabled false
-    html.enabled true
+	xml.enabled false
+	html.enabled true
 }
 
 
@@ -63,125 +63,122 @@ project.eclipse.classpath.defaultOutputDir = project.file('target/classes')
 project.ext.junitLib='junit-4.10'
 
 project.eclipse {
-    classpath {
-        file {
-            whenMerged { Classpath cp ->
-                String gradleHome = gradle.getGradleHomeDir().absolutePath.replace(File.separator, '/')
-                String gradleSrc = "${gradleHome}/src"
-                def entrySourcePath = new FileReferenceFactory().fromPath(gradleSrc)
-                def outputFactory = services.get(StyledTextOutputFactory).create("gradlePlugins.eclipseClasspath")
-                cp.entries.each { ClasspathEntry entry ->
-                    if ((entry in AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
-                        entry.sourcePath = entrySourcePath
-                        outputFactory.withStyle(Style.Info).println("Forked source path for ${entry}")
-                    }
-                    if( (entry in AbstractLibrary) && (entry.library.file.name.startsWith("${junitLib}")) ) {
-                        entry.sourcePath = new FileReferenceFactory().fromPath("${projectDir}/lib-sources/${junitLib}-src.jar")
-                    }
-                }
-            }
-        }
-    }
+	classpath {
+		file {
+			whenMerged { Classpath cp ->
+				String gradleHome = gradle.getGradleHomeDir().absolutePath.replace(File.separator, '/')
+				String gradleSrc = "${gradleHome}/src"
+				def entrySourcePath = new FileReferenceFactory().fromPath(gradleSrc)
+				cp.entries.each { ClasspathEntry entry ->
+					if ((entry in AbstractLibrary) && (entry.library.file.name.startsWith('gradle-'))) {
+						entry.sourcePath = entrySourcePath
+						println("Forked source path for ${entry}")
+					}
+					if( (entry in AbstractLibrary) && (entry.library.file.name.startsWith("${junitLib}")) ) {
+						entry.sourcePath = new FileReferenceFactory().fromPath("${projectDir}/lib-sources/${junitLib}-src.jar")
+					}
+				}
+			}
+		}
+	}
 }
 
 project.eclipseJdt {
-    inputFile=project.file(jdtInputFile)
-    doLast { println "Forked eclipseJdt.inputFile from ${jdtInputFile}." }
+	inputFile=project.file(jdtInputFile)
+	doLast { println "Forked eclipseJdt.inputFile from ${jdtInputFile}." }
 }
 
 project.apply {
-    [
-        project.jdependMain,
-        project.jdependTest
-    ]*.reports {
-        xml.enabled true
-        text.enabled false
-    }
+	[
+		project.jdependMain,
+		project.jdependTest
+	]*.reports {
+		xml.enabled true
+		text.enabled false
+	}
 }
 
 project.jdependMain.doLast {
-    File file = new File(project.jdepend.reportsDir, "main.xml");
-    assert file.exists() && file.isFile(), "File '$file' must exist"
-    def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
-    def outputFactory = services.get(StyledTextOutputFactory).create("jdependMain.doLast")
-    if (numberOfCycles > 0) {
-        outputFactory.withStyle(Style.Error).println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
-        assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
-    }
-    else {
-        outputFactory.withStyle(Style.Info).println("No cycles detected for project '${project.name}' . Good work!")
-    }
+	File file = new File(project.jdepend.reportsDir, "main.xml");
+	assert file.exists() && file.isFile(), "File '$file' must exist"
+	def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
+	if (numberOfCycles > 0) {
+		println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
+		assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
+	}
+	else {
+		println("No cycles detected for project '${project.name}' . Good work!")
+	}
 }
 
 project.jdependTest.doLast {
-    File file = new File(project.jdepend.reportsDir, "test.xml");
-    assert file.exists() && file.isFile(), "File '$file' must exist"
-    def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
-    def outputFactory = services.get(StyledTextOutputFactory).create("jdependTest.doLast")
-    if (numberOfCycles > 0) {
-        outputFactory.withStyle(Style.Error).println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
-        //assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
-    }
-    else {
-        outputFactory.withStyle(Style.Info).println("No cycles detected for project '${project.name}' . Good work!")
-    }
+	File file = new File(project.jdepend.reportsDir, "test.xml");
+	assert file.exists() && file.isFile(), "File '$file' must exist"
+	def numberOfCycles = new XmlSlurper().parse(file).Cycles.Package.size()
+	if (numberOfCycles > 0) {
+		println("We have detected $numberOfCycles cycles. Checkout report file: $file.")
+		//assert numberOfCycles == 0, """We have detected $numberOfCycles cycles. Checkout report file: $file."""
+	}
+	else {
+		println("No cycles detected for project '${project.name}' . Good work!")
+	}
 }
 
 project.task("sourcesJar", type: Jar, dependsOn:"classes") {
-    group = 'Distribution'
-    description = "Makes the project specific sourceJar."
-    classifier = 'sources'
-    from project.sourceSets.main.allSource
+	group = 'Distribution'
+	description = "Makes the project specific sourceJar."
+	classifier = 'sources'
+	from project.sourceSets.main.allSource
 }
 
 project.task('distribution', type: Zip) { Zip task ->
-    group = 'Distribution'
-    description = "Makes the project distribution archive containing jar and sources jar."
-    task.dependsOn("jar")
-    task.dependsOn("sourcesJar")
-    task.from project.jar
-    task.from project.sourcesJar
-    task.from task.project.fileTree(project.projectDir) {
-        from "distributable/plugins"
-        include '*.gradle'
-    }
-    task.from task.project.fileTree("${project.projectDir}") {
-        from "src/main/resources"
-        include 'COPYING'
-    }
+	group = 'Distribution'
+	description = "Makes the project distribution archive containing jar and sources jar."
+	task.dependsOn("jar")
+	task.dependsOn("sourcesJar")
+	task.from project.jar
+	task.from project.sourcesJar
+	task.from task.project.fileTree(project.projectDir) {
+		from "distributable/plugins"
+		include '*.gradle'
+	}
+	task.from task.project.fileTree("${project.projectDir}") {
+		from "src/main/resources"
+		include 'COPYING'
+	}
 
-    //task.from project.configurations.runtime
+	//task.from project.configurations.runtime
 }
 project.task("continous") { Task task ->
-    task.dependsOn("check")
-    group = 'Build'
-    description = 'Runs test and check.'
+	task.dependsOn("check")
+	group = 'Build'
+	description = 'Runs test and check.'
 }
 
 project.task("cleanRelease") { Task task ->
-    task.dependsOn("clean", "continous", "distribution")
-    group = 'Distribution'
-    description = 'Runs continous build and makes distribution.'
+	task.dependsOn("clean", "continous", "distribution")
+	group = 'Distribution'
+	description = 'Runs continous build and makes distribution.'
 }
 
 project.task('distributionWithRuntimeDependencies', type: Zip) { Zip task ->
-    group = 'Distribution'
-    description = "Makes the project runtime distribution archive."
-    task.dependsOn("jar")
-    task.dependsOn("sourcesJar")
-    task.from task.project.fileTree(project.projectDir) {
-        from "distributable/plugins"
-        include '*.gradle'
-    }
-    task.from task.project.fileTree("${project.projectDir}") {
-        from "src/main/resources"
-        include 'COPYING'
-    }
-    task.from project.configurations.runtime
-    task.exclude 'junit-4.10.jar'
+	group = 'Distribution'
+	description = "Makes the project runtime distribution archive."
+	task.dependsOn("jar")
+	task.dependsOn("sourcesJar")
+	task.from task.project.fileTree(project.projectDir) {
+		from "distributable/plugins"
+		include '*.gradle'
+	}
+	task.from task.project.fileTree("${project.projectDir}") {
+		from "src/main/resources"
+		include 'COPYING'
+	}
+	task.from project.configurations.runtime
+	task.exclude 'junit-4.10.jar'
 }
 
 project.artifacts {
-    archives project.distribution
-    archives project.sourcesJar
+	archives project.distribution
+	archives project.sourcesJar
 }

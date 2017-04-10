@@ -11,8 +11,8 @@ public class GradleProjectBuilderForJavaLibraryProject implements
     private List<String> libraryEntries;
 
     private GradleProjectBuilderForJavaLibraryProject() {
-        this.applyFroms = new ArrayList<String>();
-        this.libraryEntries = new ArrayList<String>(2);
+        this.applyFroms = new ArrayList<>();
+        this.libraryEntries = new ArrayList<>(2);
     }
 
     private GradleProjectBuilderForJavaLibraryProject projectName(

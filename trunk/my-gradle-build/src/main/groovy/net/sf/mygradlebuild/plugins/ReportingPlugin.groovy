@@ -6,8 +6,6 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.bundling.Compression
 import org.gradle.api.tasks.bundling.Tar
-import org.gradle.logging.StyledTextOutputFactory
-import org.gradle.logging.StyledTextOutput.Style
 
 public class ReportingPlugin implements Plugin<Project>{
 
@@ -51,8 +49,7 @@ public class ReportingPlugin implements Plugin<Project>{
 					report(todir: targetDir, format: "frames")
 				}
 
-				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateTestReport")
-				outputFactory.withStyle(Style.Info).println("Aggregate test report can be found from file://${targetDir}/index.html")
+				println("Aggregate test report can be found from file://${targetDir}/index.html")
 			}
 		}
 
@@ -89,8 +86,7 @@ public class ReportingPlugin implements Plugin<Project>{
 					main = 'emma'
 					args = arguments
 				}
-				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateCoverageReport")
-				outputFactory.withStyle(Style.Info).println("Coverage report can be found from file://${targetDir}/coverage.html")
+				println("Coverage report can be found from file://${targetDir}/coverage.html")
 			}
 		}
 		project.task("aggregateJDependReport") {
@@ -122,8 +118,7 @@ public class ReportingPlugin implements Plugin<Project>{
 						]
 						standardOutput = os
 					}
-					def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateJDependReport")
-					outputFactory.withStyle(Style.Info).println("JDepend report can be found from file://${targetDir}/index.html")
+					println("JDepend report can be found from file://${targetDir}/index.html")
 				}
 			}
 		}
@@ -187,8 +182,7 @@ public class ReportingPlugin implements Plugin<Project>{
 						standardOutput = os
 					}
 				}
-				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.aggregateFindBugsReport")
-				outputFactory.withStyle(Style.Info).println("Findbugs report can be found from file://${targetDir}/index.html")
+				println("Findbugs report can be found from file://${targetDir}/index.html")
 			}
 		}
 		project.gradle.projectsEvaluated { addTasksAfterProjectsEvaluated(project) }
@@ -210,8 +204,7 @@ public class ReportingPlugin implements Plugin<Project>{
 			compression = Compression.GZIP
 			doLast {
 				def String tarFile = "${parent}/${task.archiveName}"
-				def outputFactory = services.get(StyledTextOutputFactory).create("reporting.archiveAggregateReports")
-				outputFactory.withStyle(Style.Info).println("Report artifact archive can be found from file://$tarFile")
+				println("Report artifact archive can be found from file://$tarFile")
 			}
 		}
 
