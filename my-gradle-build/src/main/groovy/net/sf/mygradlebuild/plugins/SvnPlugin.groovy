@@ -1,11 +1,12 @@
 package net.sf.mygradlebuild.plugins
 
 
+import java.lang.invoke.MethodHandleImpl.AsVarargsCollector
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-
-import groovyjarjarcommonscli.CommandLine
+import org.gradle.api.tasks.Exec
 
 public final class SvnPlugin implements Plugin<Project>{
 
@@ -57,17 +58,20 @@ public final class SvnPlugin implements Plugin<Project>{
 				println("Revision: ${svnversion}")
 			}
 		}
-		project.task("listFilesNotAddedToSvn",{ task ->
-			task.group ='Svn'
-			task.description ='List of files which are not added to svn yet.'
-			commandLine "for i in \$(svn st | grep ? | sed 's/?//'); do echo \$(realpath \$i); done;"
-		})
 
-		project.task("addNewFilesToSvn", type : { task ->
-			task.group ='Svn'
+		project.task("listFilesNotAddedToSvn", type: Exec) { Exec task ->
+			task.group = TASK_GROUP
+			task.description ='List of files which are not added to svn yet.'
+			task.executable = "bash"
+			task.args "-c", "for i in \$(svn st | grep ? | sed 's/?//'); do echo \$(realpath \$i); done;"
+		}
+
+		project.task("addNewFilesToSvn", type: Exec) { Exec task ->
+			task.group = TASK_GROUP
 			task.description ='Add the new files into svn.'
-			commandLine "for i in \$(svn st | grep ? | sed 's/?//'); do svn add \$i; done;"
-		})
+			task.executable="bash"
+			task.args "-c", "for i in \$(svn st | grep ? | sed 's/?//'); do svn add \$i; done;"
+		}
 	}
 }
 

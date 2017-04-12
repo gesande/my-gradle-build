@@ -35,16 +35,16 @@ ext.jdtInputFile = "eclipseJdt/org.eclipse.jdt.core.prefs"
 project.pmd.ignoreFailures = 'true'
 
 /*
-project.tasks.withType(Pmd) {
-	doFirst {
-		project.copy {
-			from project.file(pmdSettingsFile)
-			into project.projectDir
-		}
-		println "Pmd template file copied for project '${project.name}'"
-	}
-}
-*/
+ project.tasks.withType(Pmd) {
+ doFirst {
+ project.copy {
+ from project.file(pmdSettingsFile)
+ into project.projectDir
+ }
+ println "Pmd template file copied for project '${project.name}'"
+ }
+ }
+ */
 
 
 project.tasks.withType(FindBugs) { ignoreFailures = true } //true for time being
