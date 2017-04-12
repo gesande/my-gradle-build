@@ -17,6 +17,8 @@ apply plugin: 'findbugs'
 apply plugin: 'jdepend'
 //apply from : "${project.projectDir}/distributable/plugins/emma.gradle"
 
+pmd { toolVersion = '4.3' }
+
 repositories {
 	mavenCentral()
 	flatDir { dirs 'lib' }
@@ -30,21 +32,19 @@ dependencies {
 
 version = "2.0.0"
 ext.jdtInputFile = "eclipseJdt/org.eclipse.jdt.core.prefs"
-//ext.pmdSettingsFile = "pmd/.pmd"
-//project.pmd.ruleSetFiles = project.files(".pmd")
+ext.pmdSettingsFile = "pmd/.pmd"
+project.pmd.ruleSetFiles = project.files(".pmd")
 project.pmd.ignoreFailures = 'true'
 
-/*
- project.tasks.withType(Pmd) {
- doFirst {
- project.copy {
- from project.file(pmdSettingsFile)
- into project.projectDir
- }
- println "Pmd template file copied for project '${project.name}'"
- }
- }
- */
+project.tasks.withType(Pmd) {
+	doFirst {
+		project.copy {
+			from project.file(pmdSettingsFile)
+			into project.projectDir
+		}
+		println "Pmd template file copied for project '${project.name}'"
+	}
+}
 
 
 project.tasks.withType(FindBugs) { ignoreFailures = true } //true for time being
