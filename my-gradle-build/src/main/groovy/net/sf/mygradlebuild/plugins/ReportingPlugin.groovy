@@ -141,15 +141,6 @@ public class ReportingPlugin implements Plugin<Project>{
 				arguments.add('-onlyAnalyze')
 				String onlyAnalyzePackages = project.reportingSettings.onlyAnalyze +".-"
 				arguments.add(onlyAnalyzePackages)
-				//TODO: this doesn't work, find out why...
-				//        arguments.add('-sourcepath')
-				//        def List<String> sourcePathArgs= new ArrayList<String>()
-				//        def FileTree mainJava = fileTree("$projectDir").include('**/src/main/java')
-				//        for(File srcDir : mainJava) {
-				//            println srcDir
-				//            arguments.add(srcDir)
-				//        }
-
 				arguments.add('-auxclasspath')
 
 				def StringBuilder auxClasspath = new StringBuilder()
@@ -177,7 +168,7 @@ public class ReportingPlugin implements Plugin<Project>{
 
 				new ByteArrayOutputStream().withStream { os ->
 					def result = project.exec {
-						executable = "${project.reportingSettings.toolsDirectory}/findbugs-2.0.2/bin/findbugs"
+						executable = "${project.reportingSettings.toolsDirectory}/findbugs-${project.reportingSettings.findbugsVersion}/bin/findbugs"
 						args = arguments
 						standardOutput = os
 					}
@@ -215,5 +206,6 @@ public class ReportingPlugin implements Plugin<Project>{
 class ReportingSettingsExtension {
 	String toolsDirectory
 	String onlyAnalyze
+	String findbugsVersion
 }
 
