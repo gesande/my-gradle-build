@@ -13,15 +13,14 @@ class EclipseSettingsPlugin implements Plugin<Project> {
 		project.task ("eclipseSettings", type: GradleBuild) { GradleBuild task ->
 			group = 'IDE'
 			description= 'Build fresh Eclipse settings for all projects.'
-			tasks << 'eclipseSettingsFor'
+			tasks = ['eclipseSettingsFor']
 			doLast { println("Eclipse settings ready for all projects. Now import the projects (without copying them) into Eclipse.") }
 		}
 		project.subprojects { Project subproject ->
 			subproject.task("eclipseSettingsFor", type: GradleBuild) { GradleBuild task->
 				group = 'IDE'
 				description = 'Build fresh Eclipse settings for a specific module.'
-				tasks << 'cleanEclipse'
-				tasks << 'eclipse'
+				tasks = ['cleanEclipse', 'eclipse']
 				doLast { println("Eclipse settings ready for ${task.project.name}. Now import the project (without copying it) into Eclipse.") }
 			}
 		}

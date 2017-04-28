@@ -22,11 +22,13 @@ class NewJavaProjectToSvnPlugin implements Plugin<Project> {
 			String buildGradle = "${javaProject}:buildGradleForJavaProject"
 			String svnAdd = "${javaProject}:addProjectToSvn"
 			String svnIgnore = "${javaProject}:applySvnIgnoreFromGeneratedFile"
-			task.tasks << createJavaDirs
-			task.tasks << svnAdd
-			task.tasks << svnIgnore
-			task.tasks << eclipseSettingsFor
-			task.tasks << buildGradle
+			task.tasks = [
+				createJavaDirs,
+				svnAdd,
+				svnIgnore,
+				eclipseSettingsFor,
+				buildGradle
+			]
 
 			doLast { println("New Java project can now be found from ${task.project.buildDir}/${javaProject}") }
 		}
@@ -41,13 +43,14 @@ class NewJavaProjectToSvnPlugin implements Plugin<Project> {
 			String svnIgnore = "${javaProject}:applySvnIgnoreFromGeneratedFile"
 			String createLibDirs="${javaProject}:createLibDirs"
 			String buildGradle = "${javaProject}:buildGradleForJavaLibProject"
-
-			task.tasks << createJavaDirs
-			task.tasks << createLibDirs
-			task.tasks << svnAdd
-			task.tasks << svnIgnore
-			task.tasks << eclipseSettingsFor
-			task.tasks << buildGradle
+			task.tasks = [
+				createJavaDirs,
+				createLibDirs,
+				svnAdd,
+				svnIgnore,
+				eclipseSettingsFor,
+				buildGradle
+			]
 
 			doLast { println("New Java project can now be found from ${task.project.buildDir}/${javaProject}") }
 		}

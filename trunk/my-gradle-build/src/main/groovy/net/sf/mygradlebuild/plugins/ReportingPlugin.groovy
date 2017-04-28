@@ -23,8 +23,10 @@ public class ReportingPlugin implements Plugin<Project>{
 			doLast {
 				println "reportDir = ${project.buildDir}/reports"
 				println "toolsDir = ${project.reportingSettings.toolsDirectory}"
+				println "findbugsVersion = ${project.reportingSettings.findbugsVersion}"
 			}
 		}
+
 		project.task ("aggregateTestReport") {
 			group = 'Reporting'
 			description = "Makes aggregate test report with ant-junit."
@@ -36,7 +38,7 @@ public class ReportingPlugin implements Plugin<Project>{
 				}
 				def targetDir = new File("${project.buildDir}/reports", 'junit')
 				targetDir.mkdirs()
-				def resultsDir=targetDir.getPath()
+				def resultsDir = targetDir.getPath()
 				println 'Creating test report...'
 
 				ant.taskdef(
@@ -44,8 +46,9 @@ public class ReportingPlugin implements Plugin<Project>{
 						classname: 'org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator',
 						classpath: project.configurations.antClasspath.asPath
 						)
+
 				ant.junitreport(todir: resultsDir) {
-					fileset(dir: "${project.projectDir}", includes: '**/build/test-results/TEST-*.xml')
+					fileset(dir: "${project.projectDir}", includes: '**/build/test-results/**/TEST-*.xml')
 					report(todir: targetDir, format: "frames")
 				}
 
@@ -53,42 +56,6 @@ public class ReportingPlugin implements Plugin<Project>{
 			}
 		}
 
-		project.task("aggregateCoverageReport") { Task task ->
-			group = 'Reporting'
-			description = "Makes aggregate coverage report with emma."
-			doLast {
-				def targetDir = new File("${project.buildDir}/reports", 'emma')
-				targetDir.deleteDir()
-				targetDir.mkdirs()
-				def List<String> inArgs= new ArrayList<String>()
-				def List<String> sourcePathArgs= new ArrayList<String>()
-				for (Project sub : task.project.getSubprojects()) {
-					def FileTree emmaTree = sub.fileTree('build').include('tmp/emma/metadata.emma').include('tmp/emma/instr/metadata.emma')
-					for(File emmaFile : emmaTree.files) {
-						inArgs.add("-input")
-						inArgs.add(emmaFile)
-					}
-					def String sourceDir = sub.fileTree("src/main/java").getDir()
-					sourcePathArgs.add("-sourcepath")
-					sourcePathArgs.add(sourceDir)
-				}
-				def List<String> arguments = new ArrayList<String>()
-				arguments.add("report")
-				arguments.add("-report")
-				arguments.add("html")
-				arguments.addAll(inArgs)
-				arguments.addAll(sourcePathArgs)
-				arguments.add("-Dreport.out.file=${targetDir}/coverage.html")
-
-				println 'Creating coverage report...'
-				def exit = project.javaexec {
-					classpath "${project.reportingSettings.toolsDirectory}/emma-2.1.5320-lib/emma.jar"
-					main = 'emma'
-					args = arguments
-				}
-				println("Coverage report can be found from file://${targetDir}/coverage.html")
-			}
-		}
 		project.task("aggregateJDependReport") {
 			group = 'Reporting'
 			description = "Makes aggregate jdepend report with tattletale."

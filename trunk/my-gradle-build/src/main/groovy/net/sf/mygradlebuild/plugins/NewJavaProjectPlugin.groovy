@@ -19,10 +19,11 @@ class NewJavaProjectPlugin implements Plugin<Project> {
 			String createJavaDirs = "${javaProject}:createJavaDirs"
 			String eclipseSettingsFor = "${javaProject}:eclipseSettingsFor"
 			String buildGradle = "${javaProject}:buildGradleForJavaProject"
-			task.tasks << createJavaDirs
-			task.tasks << eclipseSettingsFor
-			task.tasks << buildGradle
-
+			task.tasks = [
+				createJavaDirs,
+				eclipseSettingsFor ,
+				buildGradle
+			]
 			doLast { println("New Java project can now be found from ${task.project.buildDir}/${javaProject}") }
 		}
 
@@ -34,12 +35,12 @@ class NewJavaProjectPlugin implements Plugin<Project> {
 			String eclipseSettingsFor = "${javaProject}:eclipseSettingsFor"
 			String createLibDirs="${javaProject}:createLibDirs"
 			String buildGradle = "${javaProject}:buildGradleForJavaLibProject"
-
-			task.tasks << createJavaDirs
-			task.tasks << createLibDirs
-			task.tasks << eclipseSettingsFor
-			task.tasks << buildGradle
-
+			task.tasks=[
+				createJavaDirs,
+				createLibDirs,
+				eclipseSettingsFor,
+				buildGradle
+			]
 			doLast { println("New Java project can now be found from ${task.project.buildDir}/${javaProject}") }
 		}
 	}
